@@ -1,21 +1,57 @@
-/*******************************************************************************************
- *
- *   raylib [core] example - Keyboard input
- *
- *   Example originally created with raylib 1.0, last time updated with
- *raylib 1.0
- *
- *   Example licensed under an unmodified zlib/libpng license, which is an
- *OSI-certified, BSD-like license that allows static linking with closed source
- *software
- *
- *   Copyright (c) 2014-2023 Ramon Santamaria (@raysan5)
- *
- ********************************************************************************************/
 extern "C"
 {
 #include "raylib.h"
 }
+
+#include <iostream>
+#include <vector>
+
+const int screenWidth = 1920;
+const int screenHeight = 1020;
+
+const int screenDelimBorderX = screenHeight;
+
+const int squareWidth = 102;
+
+// clang-format off
+std::vector<std::vector<unsigned int>> mapData = {
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 0, 0, 0, 0, 0, 1, 1},
+    {1, 1, 0, 0, 0, 0, 1, 0, 0, 1},
+    {1, 0, 0, 0, 1, 1, 1, 0, 0, 1},
+    {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+    {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+    {1, 1, 1, 0, 0, 0, 0, 0, 1, 1},
+    {1, 1, 1, 0, 0, 1, 1, 0, 1, 1},
+    {1, 1, 1, 0, 0, 0, 0, 0, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+};
+// clang-format on
+
+void DrawingMap(const std::vector<std::vector<unsigned int>>& data,
+                const unsigned int squareSideLength)
+{
+    for (int i = 0; i < data.size(); i++)
+        for (int j = 0; j < data[i].size(); j++)
+        {
+            Color squareColor;
+            squareColor = (data[i][j]) ? BLUE : SKYBLUE;
+            DrawRectangle(j * squareSideLength, i * squareSideLength,
+                          squareSideLength, squareSideLength, squareColor);
+        }
+
+    for (int i = 0; i < screenHeight / squareSideLength; i++)
+    {
+        DrawLine(0, (i + 1) * squareSideLength, screenDelimBorderX,
+                 (i + 1) * squareSideLength, BLACK);
+
+        DrawLine((i + 1) * squareSideLength, 0, (i + 1) * squareSideLength,
+                 screenHeight, BLACK);
+    }
+
+    DrawRectangle(screenDelimBorderX, 0, screenWidth, screenHeight, BLACK);
+}
+
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
@@ -23,13 +59,8 @@ int main(void)
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
 
-    InitWindow(screenWidth, screenHeight,
-               "raylib [core] example - keyboard input");
-
-    Vector2 ballPosition = {(float)screenWidth / 2, (float)screenHeight / 2};
+    InitWindow(screenWidth, screenHeight, "Simple raycast");
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -39,25 +70,15 @@ int main(void)
     {
         // Update
         //----------------------------------------------------------------------------------
-        if (IsKeyDown(KEY_RIGHT))
-            ballPosition.x += 2.0f;
-        if (IsKeyDown(KEY_LEFT))
-            ballPosition.x -= 2.0f;
-        if (IsKeyDown(KEY_UP))
-            ballPosition.y -= 2.0f;
-        if (IsKeyDown(KEY_DOWN))
-            ballPosition.y += 2.0f;
+
         //----------------------------------------------------------------------------------
 
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
-        ClearBackground(RAYWHITE);
-
-        DrawText("move the ball with arrow keys", 10, 10, 20, DARKGRAY);
-
-        DrawCircleV(ballPosition, 50, MAROON);
+        ClearBackground(BLANK);
+        DrawingMap(mapData, squareWidth);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
