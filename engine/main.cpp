@@ -3,6 +3,7 @@ extern "C"
 #include "raylib.h"
 }
 
+#include <cmath>
 #include <iostream>
 #include <vector>
 
@@ -35,7 +36,7 @@ void DrawingMap(const std::vector<std::vector<unsigned int>>& data,
         for (int j = 0; j < data[i].size(); j++)
         {
             Color squareColor;
-            squareColor = (data[i][j]) ? BLUE : SKYBLUE;
+            squareColor = (data[i][j]) ? GRAY : BLACK;
             DrawRectangle(j * squareSideLength, i * squareSideLength,
                           squareSideLength, squareSideLength, squareColor);
         }
@@ -58,6 +59,10 @@ void DrawingMap(const std::vector<std::vector<unsigned int>>& data,
 int main(void)
 {
     // Initialization
+    Vector2 playerPos = {screenDelimBorderX / 2, screenDelimBorderX / 2};
+    float speed = 5.0f;
+    float playerAngle = PI / 2;
+    float rotationSpeedDeg = 10.0f;
     //--------------------------------------------------------------------------------------
 
     InitWindow(screenWidth, screenHeight, "Simple raycast");
@@ -70,6 +75,24 @@ int main(void)
     {
         // Update
         //----------------------------------------------------------------------------------
+        if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W))
+        {
+            playerPos.x += speed * cos(playerAngle);
+            playerPos.y -= speed * sin(playerAngle);
+        }
+        if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S))
+        {
+            playerPos.x -= speed * cos(playerAngle);
+            playerPos.y += speed * sin(playerAngle);
+        }
+        if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
+            playerAngle = (playerAngle <= 0.0f)
+                              ? 2 * PI
+                              : playerAngle - rotationSpeedDeg * PI / 180;
+        if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))
+            playerAngle = (playerAngle >= 2 * PI)
+                              ? 0.0f
+                              : playerAngle + rotationSpeedDeg * PI / 180;
 
         //----------------------------------------------------------------------------------
 
@@ -79,6 +102,12 @@ int main(void)
 
         ClearBackground(BLANK);
         DrawingMap(mapData, squareWidth);
+
+        DrawLineEx(playerPos,
+                   {playerPos.x + 20 * cos(playerAngle),
+                    playerPos.y - 20 * sin(playerAngle)},
+                   3, GREEN);
+        DrawCircleV(playerPos, 10, YELLOW);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
