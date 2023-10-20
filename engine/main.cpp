@@ -43,11 +43,15 @@ void DrawingMap(const std::vector<std::vector<unsigned int>>& data,
 
     for (int i = 0; i < screenHeight / squareSideLength; i++)
     {
-        DrawLine(0, (i + 1) * squareSideLength, screenDelimBorderX,
-                 (i + 1) * squareSideLength, BLACK);
+        DrawLineEx({0, static_cast<float>((i + 1) * squareSideLength)},
+                   {screenDelimBorderX,
+                    static_cast<float>((i + 1) * squareSideLength)},
+                   2, LIGHTGRAY);
 
-        DrawLine((i + 1) * squareSideLength, 0, (i + 1) * squareSideLength,
-                 screenHeight, BLACK);
+        DrawLineEx(
+            {static_cast<float>((i + 1) * squareSideLength), 0},
+            {static_cast<float>((i + 1) * squareSideLength), screenHeight}, 2,
+            LIGHTGRAY);
     }
 
     DrawRectangle(screenDelimBorderX, 0, screenWidth, screenHeight, BLACK);
